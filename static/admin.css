@@ -1,0 +1,54 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    background: linear-gradient(to right, rgb(38, 51, 61), rgb(50, 55, 65), rgb(33, 33, 78));
+}
+.admin-card {
+    border-radius: 15px;
+    background-color: rgba(0,0,0,0.4);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+    padding: 2rem;
+    margin-top: 40px;
+}
+.admin-title {
+    color: #fff;
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+.admin-section-title {
+    color: #58cc71;
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-top: 2rem;
+}
+.table {
+    background: rgba(0,0,0,0.2);
+    color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.table th, .table td {
+    vertical-align: middle;
+}
+.btn-primary, .btn-danger {
+    border-radius: 20px;
+    padding: 0.3rem 1.2rem;
+}
+.form-control-file, .form-control {
+    background: rgba(0,0,0,0.3);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+}
+.form-control:focus, .form-control-file:focus {
+    background: rgba(0,0,0,0.5);
+    color: #fff;
+    box-shadow: none;
+}
+.alert {
+    border-radius: 10px;
+}
+ul {
+    color: #fff;
+} 

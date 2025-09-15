@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <title>AIKKu | Chat</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='chat.css')}}" />
+</head>
+
+<body>
+    <!-- <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="background: linear-gradient(to right, rgb(38, 51, 61), rgb(50, 55, 65), rgb(33, 33, 78));">
+    <button id="sidebarToggle" class="btn btn-outline-light d-lg-none mr-2" type="button" aria-label="فتح القائمة">
+        <i class="fas fa-bars"></i>
+    </button>
+    <a class="navbar-brand" href="/">
+        <i class="fas fa-comments"></i> AIKKu Chat
+    </a>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item {% if request.path == '/' %}active{% endif %}">
+                <a class="nav-link" href="/">
+                    <i class="fas fa-comments"></i> Chat
+                </a>
+            </li>
+            <li class="nav-item {% if request.path == '/profile' %}active{% endif %}">
+                <a class="nav-link" href="/profile">
+                    <i class="fas fa-user-circle"></i> Profile
+                </a>
+            </li>
+            {% if session.get('user_type') == 'admin' %}
+            <li class="nav-item {% if request.path.startswith('/admin') %}active{% endif %}">
+                <a class="nav-link" href="/admin">
+                    <i class="fas fa-user-shield"></i> Admin
+                </a>
+            </li>
+            {% endif %}
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav> -->
+
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark"
+        style="background: linear-gradient(to right, rgb(38, 51, 61), rgb(50, 55, 65), rgb(33, 33, 78)); border-bottom: dashed 1px lightblue;">
+        <button id="sidebarToggle" class="btn btn-outline-light d-lg-none mr-2" type="button" aria-label="فتح القائمة">
+            <i class="fas fa-bars"></i>
+        </button>
+        <a class="navbar-brand" href="/">
+            <img src="/profile_pics/AIKKu_logo.png" width="2%" class="rounded-circle user_img">
+            AIKKu Chat
+        </a>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item {% if request.path == '/about' %}active{% endif %}">
+                    <a class="nav-link" href="/about">
+                        <i class="fas fa-info-circle"></i> About Us
+                    </a>
+                </li>
+                {% if session.get('user_id') %}
+                <li class="nav-item {% if request.path == '/chat' %}active{% endif %}">
+                    <a class="nav-link" href="/chat">
+                        <i class="fas fa-comments"></i> Chat
+                    </a>
+                </li>
+                <li class="nav-item {% if request.path == '/profile' %}active{% endif %}">
+                    <a class="nav-link" href="/profile">
+                        <i class="fas fa-user-circle"></i> Profile
+                    </a>
+                </li>
+
+                {% if session.get('user_type') == 'admin' %}
+                <li class="nav-item {% if request.path.startswith('/admin') %}active{% endif %}">
+                    <a class="nav-link" href="/admin">
+                        <i class="fas fa-user-shield"></i> Admin
+                    </a>
+                </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </li>
+                {% else %}
+                <li class="nav-item {% if request.path == '/login' %}active{% endif %}">
+                    <a class="nav-link" href="/login">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                </li>
+                <li class="nav-item {% if request.path == '/signup' %}active{% endif %}">
+                    <a class="nav-link" href="/signup">
+                        <i class="fas fa-user-plus"></i> Sign Up
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+    <div class="container-fluid h-100">
+        <div id="chat-layout" class="row h-100">
+            <div class="col-12 col-md-4 col-lg-3 p-0 d-flex flex-column sidebar-glass border-right" id="chat-sidebar"
+                style="max-width:320px;min-width:220px;">
+                <button id="sidebarToggle" class="btn btn-outline-light d-lg-none mr-2" type="button"
+                    aria-label="فتح القائمة">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="d-flex flex-column flex-shrink-0 p-3 h-100">
+                    <button id="new-chat-btn" class="btn btn-success btn-block mb-3"><i class="fas fa-plus"></i> محادثة
+                        جديدة</button>
+                    <div class="mb-3">
+                        <input type="text" id="chat-search" class="form-control search"
+                            placeholder="بحث في المحادثات...">
+                    </div>
+                    <div id="chat-list-container" class="flex-grow-1 overflow-auto" style="min-height:0;">
+                        <ul id="chat-list" class="list-group list-group-flush"></ul>
+                        <div id="chat-list-loading" class="text-center py-2" style="display:none;">
+                            <span class="spinner-border spinner-border-sm text-light"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="main-chat" class="col p-0 d-flex flex-column chat">
+                <div class="card chat-card">
+                    <div class="card-header msg_head">
+                        <div class="d-flex bd-highlight">
+                            <!-- <div class="img_cont">
+                            <img src="https://i.ibb.co/fSNP7Rz/icons8-chatgpt-512.png" class="rounded-circle user_img">
+                            <span class="online_icon"></span>
+                        </div> -->
+                            <div class="img_cont">
+                                <img src="/profile_pics/AIKKu_logo.png" width="10%" class="rounded-circle user_img">
+                                <span class="offline_icon"></span>
+                            </div>
+                            <div class="user_info">
+                                <span>AIKKu</span>
+                                <p>اسألني عن جامعة الملك خالد!</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="messageFormeight" class="card-body msg_card_body"></div>
+                    <div class="card-footer chat-composer">
+                        <form id="messageArea" class="input-group">
+                            <input type="text" id="text" name="msg" placeholder="اكتب رسالتك هنا..." autocomplete="off"
+                                class="form-control type_msg" required dir="rtl" />
+                            <div class="input-group-append">
+                                <button type="submit" id="send" class="input-group-text send_btn" aria-label="إرسال">
+                                    <i class="fas fa-location-arrow"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modals for rename/delete chat session (unchanged) -->
+    <div class="modal fade" id="renameChatModal" tabindex="-1" role="dialog" aria-labelledby="renameChatModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="renameChatModalLabel">Rename Chat</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" class="form-control" id="renameChatInput" placeholder="Enter new chat title">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveRenameBtn">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal for delete confirmation -->
+    <div class="modal fade" id="deleteChatModal" tabindex="-1" role="dialog" aria-labelledby="deleteChatModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteChatModalLabel">Delete Chat</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this chat session?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        // Sidebar toggle logic
+        const bodyEl = document.body;
+        const sidebar = document.getElementById('chat-sidebar');
+        const mainChat = document.getElementById('main-chat');
+        const toggleBtn = document.getElementById('sidebarToggle');
+        const msgBody = document.getElementById('messageFormeight');
+        const inputEl = document.getElementById('text');
+        function openMobileSidebar() { bodyEl.classList.add('sidebar-open'); }
+        function closeMobileSidebar() { bodyEl.classList.remove('sidebar-open'); }
+        toggleBtn && toggleBtn.addEventListener('click', function () {
+            if (window.matchMedia('(max-width: 991.98px)').matches) {
+                bodyEl.classList.toggle('sidebar-open');
+            } else {
+                bodyEl.classList.toggle('sidebar-collapsed');
+            }
+        });
+        document.addEventListener('click', (e) => {
+            if (bodyEl.classList.contains('sidebar-open')) {
+                const inside = sidebar.contains(e.target) || (toggleBtn && toggleBtn.contains(e.target));
+                if (!inside) closeMobileSidebar();
+            }
+        });
+
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                var csrftoken = $('meta[name="csrf-token"]').attr('content');
+                if (csrftoken && /^(POST|PUT|DELETE|PATCH)$/i.test(settings.type)) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+        // RTL direction
+        msgBody.setAttribute('dir', 'rtl');
+        inputEl.setAttribute('dir', 'rtl');
+        inputEl.style.textAlign = 'right';
+        // Auto-scroll to bottom after rendering messages
+        function scrollToBottom() { msgBody.scrollTop = msgBody.scrollHeight; }
+
+        // --- Chat Logic ---
+        let chatSessions = [];
+        let activeSessionId = null;
+
+        function appendMessage({ sender_type, message_text, created_at, is_placeholder }) {
+            const isUser = sender_type === 'student';
+            let msgHtml = '';
+            if (isUser) {
+                msgHtml = `<div class="d-flex justify-content-end mb-4">
+            <div class="msg_cotainer_send">${message_text}
+                <span class="msg_time_send">${created_at || ''}</span>
+            </div>
+            <div class="img_cont_msg">
+                <img src="https://i.ibb.co/d5b84Xw/Untitled-design.png" class="rounded-circle user_img_msg">
+            </div>
+        </div>`;
+            } else {
+                msgHtml = `<div class="d-flex justify-content-start mb-4 bot-msg${is_placeholder ? ' bot-placeholder' : ''}">
+            <div class="img_cont_msg">
+                <img src="/profile_pics/AIKKu_Logo.png" class="rounded-circle user_img_msg">
+            </div>
+            <div class="msg_cotainer">${message_text}<span class="msg_time">${created_at || ''}</span></div>
+        </div>`;
+            }
+            msgBody.insertAdjacentHTML('beforeend', msgHtml);
+            scrollToBottom();
+        }
+
+        function renderChatList(sessions) {
+            const chatList = document.getElementById('chat-list');
+            chatList.innerHTML = '';
+            sessions.forEach(session => {
+                const li = document.createElement('li');
+                li.className = 'list-group-item d-flex justify-content-between align-items-center chat-session-item';
+                li.setAttribute('data-session-id', session.session_id);
+                li.style.position = 'relative'; // Ensure dropdown works
+                li.innerHTML = `
+            <span class="chat-title">${session.session_title}</span>
+            <span class="text-muted small">${session.created_at}</span>
+            <div class="dropdown ml-2" style="position: relative;">
+                <button class="btn btn-light btn-sm dropdown-toggle" type="button" id="dropdownMenu${session.session_id}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu${session.session_id}">
+                    <a class="dropdown-item rename-chat" href="#" data-session-id="${session.session_id}" data-title="${session.session_title}"><i class="fas fa-edit mr-2"></i>Rename</a>
+                    <a class="dropdown-item delete-chat" href="#" data-session-id="${session.session_id}"><i class="fas fa-trash-alt mr-2"></i>Delete</a>
+                </div>
+            </div>
+        `;
+                li.onclick = (e) => {
+                    // Prevent click if dropdown or its children are clicked
+                    if (e.target.closest('.dropdown')) return;
+                    selectChatSession(session.session_id);
+                };
+                chatList.appendChild(li);
+            });
+            // Attach handlers for rename/delete
+            $(".rename-chat").off('click').on('click', function (e) {
+                e.preventDefault();
+                const sessionId = $(this).data('session-id');
+                const title = $(this).data('title');
+                $('#renameChatInput').val(title);
+                $('#renameChatModal').data('session-id', sessionId).modal('show');
+            });
+            $(".delete-chat").off('click').on('click', function (e) {
+                e.preventDefault();
+                const sessionId = $(this).data('session-id');
+                $('#deleteChatModal').data('session-id', sessionId).modal('show');
+            });
+        }
+
+        function fetchChatSessions() {
+            $.get('/api/chat_sessions', function (data) {
+                let sessions = data.sessions || [];
+                chatSessions = sessions;
+                renderChatList(chatSessions);
+                // Auto-select the first session if none is active
+                if (!activeSessionId && chatSessions.length > 0) {
+                    selectChatSession(chatSessions[0].session_id);
+                }
+            });
+        }
+
+        function renderMessages(messages) {
+            if (!messages || messages.length === 0) {
+                msgBody.innerHTML = '<div class="text-center text-muted my-5"><i class="fas fa-comments fa-2x mb-2"></i><div>لا توجد رسائل بعد. ابدأ المحادثة!</div></div>';
+                return;
+            }
+            msgBody.innerHTML = '';
+            messages.forEach(msg => {
+                appendMessage({
+                    sender_type: msg.sender_type,
+                    message_text: msg.message_text,
+                    created_at: msg.created_at
+                });
+            });
+            scrollToBottom();
+        }
+
+        function selectChatSession(sessionId) {
+            activeSessionId = sessionId;
+            // Highlight active chat
+            document.querySelectorAll('.chat-session-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('data-session-id') == sessionId) {
+                    item.classList.add('active');
+                }
+            });
+            // Load messages for the selected session
+            $.get(`/api/chat_messages/${sessionId}`, function (data) {
+                if (data.messages) {
+                    renderMessages(data.messages);
+                } else {
+                    renderMessages([]);
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            fetchChatSessions();
+            // Prevent scroll event from bubbling up when at top/bottom of chat messages
+            // msgBody.addEventListener('wheel', function (e) {
+            //     const atTop = msgBody.scrollTop === 0;
+            //     const atBottom = msgBody.scrollHeight - msgBody.scrollTop === msgBody.clientHeight;
+            //     if ((e.deltaY < 0 && atTop) || (e.deltaY > 0 && atBottom)) {
+            //         e.preventDefault();
+            //     }
+            // }, { passive: false });
+            // Handle sending messages
+            $("#messageArea").on("submit", function (event) {
+                event.preventDefault();
+                var rawText = $("#text").val();
+                if (!rawText.trim()) return;
+                $("#text").val("");
+                // 1. Show user message immediately
+                appendMessage({
+                    sender_type: 'student',
+                    message_text: rawText,
+                    created_at: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                });
+                // 2. Show bot placeholder immediately
+                appendMessage({
+                    sender_type: 'system',
+                    message_text: '<span class="text-muted"><i class="fas fa-spinner fa-spin"></i> جاري المعالجة...</span>',
+                    is_placeholder: true
+                });
+                if (!activeSessionId) {
+                    // Create a new chat session first
+                    $.post('/api/new_chat_session', function (data) {
+                        if (data.session_id) {
+                            chatSessions.unshift({
+                                session_id: data.session_id,
+                                session_title: data.session_title,
+                                created_at: data.created_at
+                            });
+                            renderChatList(chatSessions);
+                            selectChatSession(data.session_id);
+                            activeSessionId = data.session_id;
+                            sendToSession(activeSessionId, rawText);
+                        } else {
+                            alert(data.error || 'فشل في إنشاء محادثة جديدة.');
+                        }
+                    });
+                } else {
+                    sendToSession(activeSessionId, rawText);
+                }
+            });
+            // New chat button
+            $('#new-chat-btn').on('click', function () {
+                $.post('/api/new_chat_session', function (data) {
+                    if (data.session_id) {
+                        chatSessions.unshift({
+                            session_id: data.session_id,
+                            session_title: data.session_title,
+                            created_at: data.created_at
+                        });
+                        renderChatList(chatSessions);
+                        selectChatSession(data.session_id);
+                    } else {
+                        alert(data.error || 'فشل في إنشاء محادثة جديدة.');
+                    }
+                });
+            });
+        });
+
+        function sendToSession(sessionId, rawText) {
+            $.ajax({
+                data: {
+                    msg: rawText,
+                    session_id: sessionId
+                },
+                type: "POST",
+                url: "/get",
+            }).done(function (data) {
+                // Find the last placeholder and replace its content
+                const botPlaceholders = msgBody.querySelectorAll('.bot-placeholder .msg_cotainer');
+                if (botPlaceholders.length > 0) {
+                    const lastPlaceholder = botPlaceholders[botPlaceholders.length - 1];
+                    lastPlaceholder.innerHTML = data.response + '<span class="msg_time">' + (new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })) + '</span>';
+                    lastPlaceholder.parentElement.classList.remove('bot-placeholder');
+                }
+                if (data.session_id) {
+                    activeSessionId = data.session_id;
+                }
+                scrollToBottom();
+            });
+        }
+
+        // Restore rename and delete modal logic
+        $('#saveRenameBtn').on('click', function () {
+            const sessionId = $('#renameChatModal').data('session-id');
+            const newTitle = $('#renameChatInput').val().trim();
+            if (!newTitle) return;
+            $.ajax({
+                url: `/api/chat_sessions/${sessionId}`,
+                type: 'PATCH',
+                contentType: 'application/json',
+                data: JSON.stringify({ session_title: newTitle }),
+                success: function (data) {
+                    if (data.success) {
+                        // Update in chatSessions and re-render
+                        const idx = chatSessions.findIndex(s => s.session_id == sessionId);
+                        if (idx !== -1) {
+                            chatSessions[idx].session_title = newTitle;
+                            renderChatList(chatSessions);
+                        }
+                        $('#renameChatModal').modal('hide');
+                    }
+                }
+            });
+        });
+        $('#confirmDeleteBtn').on('click', function () {
+            const sessionId = $('#deleteChatModal').data('session-id');
+            $.ajax({
+                url: `/api/chat_sessions/${sessionId}`,
+                type: 'DELETE',
+                success: function (data) {
+                    if (data.success) {
+                        // Remove from chatSessions and re-render
+                        chatSessions = chatSessions.filter(s => s.session_id != sessionId);
+                        renderChatList(chatSessions);
+                        // If deleted session was active, switch to first available
+                        if (activeSessionId == sessionId) {
+                            if (chatSessions.length > 0) {
+                                selectChatSession(chatSessions[0].session_id);
+                            } else {
+                                activeSessionId = null;
+                                renderMessages([]);
+                            }
+                        }
+                        $('#deleteChatModal').modal('hide');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

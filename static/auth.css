@@ -1,0 +1,207 @@
+/* Authentication Pages Styling */
+.auth-card {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.auth-card .card {
+    height: auto;
+    min-height: 500px;
+    border-radius: 15px !important;
+    background-color: rgba(0,0,0,0.4) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.auth-header {
+    border-radius: 15px 15px 0 0 !important;
+    border-bottom: 0 !important;
+    background-color: rgba(0,0,0,0.3) !important;
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
+}
+
+.auth-body {
+    padding: 2rem 1.5rem;
+}
+
+.input-inline{
+    display: flex;
+}
+
+.auth-footer {
+    border-radius: 0 0 15px 15px !important;
+    border-top: 0 !important;
+    background-color: rgba(0,0,0,0.3) !important;
+    padding: 1.5rem;
+}
+
+.auth-logo {
+    font-size: 3rem;
+    color: #58cc71;
+    margin-bottom: 1rem;
+}
+
+.auth-header h3 {
+    color: white;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.auth-header p {
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 0;
+}
+
+.auth-input {
+    background-color: rgba(0,0,0,0.3) !important;
+    border: 0 !important;
+    color: white !important;
+    height: 50px !important;
+    border-radius: 0 25px 25px 0 !important;
+}
+
+.auth-input:focus {
+    box-shadow: none !important;
+    outline: 0px !important;
+    background-color: rgba(0,0,0,0.5) !important;
+}
+
+.auth-input::placeholder {
+    color: rgba(255,255,255,0.6) !important;
+}
+
+.auth-input-icon {
+    background-color: rgba(0,0,0,0.3) !important;
+    border: 0 !important;
+    color: #58cc71 !important;
+    border-radius: 25px 0 0 25px !important;
+    width: 50px;
+    justify-content: center;
+}
+
+.auth-btn {
+    background: linear-gradient(45deg, #58cc71, #4cd137) !important;
+    border: 0 !important;
+    color: white !important;
+    height: 50px !important;
+    border-radius: 25px !important;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+}
+
+.auth-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(88, 204, 113, 0.4);
+    color: white !important;
+}
+
+.auth-btn:focus {
+    box-shadow: none !important;
+    outline: 0px !important;
+}
+
+.auth-link {
+    color: #58cc71 !important;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.auth-link:hover {
+    color: #4cd137 !important;
+    text-decoration: none;
+}
+
+.auth-footer p {
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 0.5rem;
+}
+
+.auth-footer a {
+    margin: 0 0.5rem;
+}
+
+/* Custom checkbox styling */
+.custom-control-input:checked ~ .custom-control-label::before {
+    background-color: #58cc71;
+    border-color: #58cc71;
+}
+
+.custom-control-label {
+    color: rgba(255,255,255,0.8);
+    font-size: 0.9rem;
+}
+
+.custom-control-label a {
+    color: #58cc71;
+    text-decoration: none;
+}
+
+.custom-control-label a:hover {
+    color: #4cd137;
+    text-decoration: underline;
+}
+
+/* Form group spacing */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .auth-card .card {
+        margin: 1rem;
+        min-height: 450px;
+    }
+    
+    .auth-header {
+        padding: 1.5rem 1rem 1rem 1rem;
+    }
+    
+    .auth-body {
+        padding: 1.5rem 1rem;
+    }
+    
+    .auth-footer {
+        padding: 1rem;
+    }
+    
+    .auth-logo {
+        font-size: 2.5rem;
+    }
+}
+
+/* Animation for form elements */
+.auth-input, .auth-btn {
+    transition: all 0.3s ease;
+}
+
+.auth-input:focus {
+    transform: scale(1.02);
+}
+
+/* Loading state for buttons */
+.auth-btn.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.auth-btn.loading::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 50%;
+    left: 50%;
+    margin-left: -10px;
+    margin-top: -10px;
+    border: 2px solid transparent;
+    border-top: 2px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+} 

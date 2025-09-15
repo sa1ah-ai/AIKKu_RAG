@@ -1,0 +1,9 @@
+transformers>=4.38.0
+sentence-transformers
+torch>=2.1
+numpy
+scikit-learn
+markdown2
+bitsandbytes
+accelerate
+flash-attn

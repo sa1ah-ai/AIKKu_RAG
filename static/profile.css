@@ -1,0 +1,70 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    background: linear-gradient(to right, rgb(38, 51, 61), rgb(50, 55, 65), rgb(33, 33, 78));
+}
+.profile-card {
+    border-radius: 15px;
+    background-color: rgba(0,0,0,0.4);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+    padding: 2.5rem 2rem 2rem 2rem;
+    margin-top: 40px;
+    color: #fff;
+}
+.profile-header {
+    margin-bottom: 1.5rem;
+}
+.profile-img-wrapper {
+    margin-bottom: 1rem;
+}
+.profile-img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid #58cc71;
+    background: #222;
+}
+.profile-img-default {
+    font-size: 100px;
+    color: #58cc71;
+    background: #222;
+    border-radius: 50%;
+    padding: 0.2em;
+}
+.profile-username {
+    font-size: 1.7rem;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+}
+.profile-email {
+    color: #58cc71;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+.profile-body strong {
+    color: #58cc71;
+}
+.profile-footer {
+    margin-top: 2rem;
+}
+.btn-primary {
+    border-radius: 20px;
+    padding: 0.3rem 1.2rem;
+}
+.modal-content {
+    background: rgba(0,0,0,0.95);
+    color: #fff;
+    border-radius: 15px;
+}
+.form-control, .form-control-file {
+    background: rgba(0,0,0,0.3);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+}
+.form-control:focus, .form-control-file:focus {
+    background: rgba(0,0,0,0.5);
+    color: #fff;
+    box-shadow: none;
+} 
